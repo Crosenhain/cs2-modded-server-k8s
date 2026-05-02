@@ -1,5 +1,3 @@
-replicaCount: 1
-
 image:
   repository: ghcr.io/kus/cs2-modded-server
   pullPolicy: IfNotPresent
