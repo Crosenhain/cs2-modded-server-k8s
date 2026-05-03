@@ -71,7 +71,7 @@ spec:
           containers:
             - name: watcher
               image: "{{.Values.watcher.image.repository}}:
-                {{.Values.watcher.image.tag
+               {{.Values.watcher.image.tag
                | default .Chart.AppVersion}}"
               command: ["/bin/bash", "/scripts/watcher.sh"]
               env:
