@@ -26,7 +26,8 @@ spec:
         fsGroup: 1000
       containers:
         - name: {{.Chart.Name}}
-          image: "{{.Values.image.repository}}:{{.Values.image.tag | default .Chart.AppVersion}}"
+          image: "{{.Values.image.repository}}:{{.Values.image.tag
+            | default .Chart.AppVersion}}"
           imagePullPolicy: {{.Values.image.pullPolicy}}
           ports:
             - containerPort: {{.Values.service.port}}
@@ -37,22 +38,30 @@ spec:
             - name: STEAM_ACCOUNT
               valueFrom:
                 secretKeyRef:
-                  name: {{.Values.secrets.existingSecret | default (printf "%s-secret" (include "cs2-server.fullname" .))}}
+                  name: {{.Values.secrets.existingSecret
+                    | default (printf "%s-secret" (
+                    include "cs2-server.fullname" .))}}
                   key: STEAM_ACCOUNT
             - name: API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{.Values.secrets.existingSecret | default (printf "%s-secret" (include "cs2-server.fullname" .))}}
+                  name: {{.Values.secrets.existingSecret
+                    | default (printf "%s-secret" (
+                    include "cs2-server.fullname" .))}}
                   key: API_KEY
             - name: RCON_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{.Values.secrets.existingSecret | default (printf "%s-secret" (include "cs2-server.fullname" .))}}
+                  name: {{.Values.secrets.existingSecret
+                   | default (printf "%s-secret" (
+                   include "cs2-server.fullname" .))}}
                   key: RCON_PASSWORD
             - name: SERVER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{.Values.secrets.existingSecret | default (printf "%s-secret" (include "cs2-server.fullname" .))}}
+                  name: {{.Values.secrets.existingSecret
+                    | default (printf "%s-secret" (
+                    include "cs2-server.fullname" .))}}
                   key: SERVER_PASSWORD
             - name: EXEC
               value: {{.Values.env.exec | quote}}
