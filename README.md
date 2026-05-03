@@ -55,11 +55,7 @@ helm install cs2-server . -f values.yaml
 ### Via ArgoCD
 1. Add Git Repo to ArgoCD.
 2. Create Application pointing to the chart folder.
-3. Override `values.yaml` in ArgoCD UI/Manifest.
-
-## CI/CD Pipeline
-- **Lint**: Runs on Pull Requests to `templates/`, `values.yaml`, or `Chart.yaml`.
-- **Release**: Triggered by tags (e.g., `v1.0.0`). Packages Helm chart and pushes to GHCR as an OCI artifact.
+3. Override `values.yaml`, or don't. I'm not your dad.
 
 ### Using the Published Chart
 ```bash
