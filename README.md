@@ -35,6 +35,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: cs2-secret
+  namespace: cs2
 type: Opaque
 stringData:
   STEAM_ACCOUNT: "your-token"
@@ -55,3 +56,12 @@ helm install cs2-server . -f values.yaml
 1. Add Git Repo to ArgoCD.
 2. Create Application pointing to the chart folder.
 3. Override `values.yaml` in ArgoCD UI/Manifest.
+
+## CI/CD Pipeline
+- **Lint**: Runs on Pull Requests to `templates/`, `values.yaml`, or `Chart.yaml`.
+- **Release**: Triggered by tags (e.g., `v1.0.0`). Packages Helm chart and pushes to GHCR as an OCI artifact.
+
+### Using the Published Chart
+```bash
+helm pull oci://ghcr.io/crosenhain/charts/cs2-modded-server
+```

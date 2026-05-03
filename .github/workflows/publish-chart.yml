@@ -1,0 +1,42 @@
+name: Publish Helm Chart
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  REGISTRY: ghcr.io
+  # Chart name from Chart.yaml
+  CHART_NAME: cs2-modded-server
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.12.0
+
+      - name: Log in to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ env.REGISTRY }} --username ${{ github.actor }} --password-stdin
+
+      - name: Package and Push Helm Chart
+        run: |
+          # Use tag as version, stripping 'v' prefix if present
+          VERSION=${GITHUB_REF_NAME#v}
+
+          # Update version in Chart.yaml to match tag
+          sed -i "s/^version: .*/version: ${VERSION}/" Chart.yaml
+
+          helm package .
+          helm push ${CHART_NAME}-${VERSION}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
