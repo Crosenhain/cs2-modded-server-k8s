@@ -25,6 +25,14 @@ nodeSelector:
   kubernetes.io/hostname: servername
 env:
   exec: on_boot.cfg
+  # Delete appmanifest_730.acf before every update. Historical default: it makes a
+  # corrupt manifest impossible to get stuck on, at the cost of Steam re-downloading
+  # the full install every boot. install_docker.sh now recovers that failure on its
+  # own, so this can be set to false.
+  removeAppmanifestOnStart: true
+  # Run "+app_update 730 validate" instead of a plain app_update. Re-hashes the whole
+  # install on every boot, so leave it off unless clearing a wedged install.
+  performValidationOnStart: false
 watcher:
   enabled: true
   schedule: '*/15 * * * *'

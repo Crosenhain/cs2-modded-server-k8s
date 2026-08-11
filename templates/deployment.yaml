@@ -73,6 +73,10 @@ spec:
               value: {{.Values.env.exec | quote}}
             - name: PORT
               value: {{.Values.service.port | quote}}
+            - name: REMOVE_APP_MANIFEST_ON_START
+              value: {{.Values.env.removeAppmanifestOnStart | default "true" | quote}}
+            - name: VALIDATE_ON_START
+              value: {{.Values.env.performValidationOnStart | default "false" | quote}}
           volumeMounts:
             - name: cs2-data
               mountPath: /home/steam/cs2
