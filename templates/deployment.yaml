@@ -73,10 +73,13 @@ spec:
               value: {{.Values.env.exec | quote}}
             - name: PORT
               value: {{.Values.service.port | quote}}
+            # Not piped through `default`: Helm treats false as empty, so a
+            # `default "true"` here silently ignored anyone setting this false.
+            # The script's own ${VAR:-false} covers an unset value.
             - name: REMOVE_APP_MANIFEST_ON_START
-              value: {{.Values.env.removeAppmanifestOnStart | default "true" | quote}}
+              value: {{.Values.env.removeAppmanifestOnStart | quote}}
             - name: VALIDATE_ON_START
-              value: {{.Values.env.performValidationOnStart | default "false" | quote}}
+              value: {{.Values.env.performValidationOnStart | quote}}
           volumeMounts:
             - name: cs2-data
               mountPath: /home/steam/cs2
