@@ -248,6 +248,9 @@ fi
 
 echo "Starting server on $PUBLIC_IP:$PORT"
 # https://developer.valvesoftware.com/wiki/Counter-Strike_2/Dedicated_Servers#Command-Line_Parameters
+# $IP_ARGS is "-ip <addr>" or empty; unquoted so it splits into two tokens when
+# set and into none when empty. Quoting it passes cs2 an empty argument.
+# shellcheck disable=SC2086
 echo ./game/bin/linuxsteamrt64/cs2 \
     -dedicated \
     -console \
@@ -255,7 +258,7 @@ echo ./game/bin/linuxsteamrt64/cs2 \
     -disable_workshop_command_filtering \
     -autoupdate \
     -tickrate "$TICKRATE" \
-    "$IP_ARGS" \
+    ${IP_ARGS} \
     -port "$PORT" \
     +map "${MAP-de_dust2}" \
     +sv_visiblemaxplayers "$MAXPLAYERS" \
@@ -268,6 +271,7 @@ echo ./game/bin/linuxsteamrt64/cs2 \
     +sv_password "$SERVER_PASSWORD" \
     +rcon_password "$RCON_PASSWORD" \
     +exec "$EXEC"
+# shellcheck disable=SC2086
 sudo -u $user ./game/bin/linuxsteamrt64/cs2 \
     -dedicated \
     -console \
@@ -275,7 +279,7 @@ sudo -u $user ./game/bin/linuxsteamrt64/cs2 \
     -disable_workshop_command_filtering \
     -autoupdate \
     -tickrate "$TICKRATE" \
-    "$IP_ARGS" \
+    ${IP_ARGS} \
     -port "$PORT" \
     +map "${MAP-de_dust2}" \
     +sv_visiblemaxplayers "$MAXPLAYERS" \
