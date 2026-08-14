@@ -154,10 +154,10 @@ update_ok() {
 }
 
 # Deleting the manifest every boot is the old blanket guard against a corrupt one.
-# It works, but Steam then re-downloads the whole ~60 GB install each time. The
-# escalation below recovers the same failure without that cost, so this defaults to
-# the historical behaviour and can be flipped to "false" once that is trusted.
-if [ "${REMOVE_APP_MANIFEST_ON_START:-true}" = "true" ]; then
+# It works, but Steam then re-verifies and refetches the whole ~70 GB install on
+# every restart. The escalation below recovers the same failure only when it
+# actually happens, so this now defaults to off.
+if [ "${REMOVE_APP_MANIFEST_ON_START:-false}" = "true" ]; then
     echo "Removing appmanifest_730.acf in case it is corrupt"
     rm -f "$MANIFEST"
 fi
@@ -176,8 +176,21 @@ if ! update_ok; then
     run_app_update validate
 fi
 
+# State 0x6 with a TargetBuildID set is usually a half-applied update parked in
+# steamapps/downloading. Clearing just that lets the next app_update restart the
+# download and keep the ~70 GB already installed. Do this before the manifest
+# nuke below, which discards Steam's whole idea of what is on disk and costs a
+# full verify plus refetch of the entire install.
 if ! update_ok; then
-    echo "WARNING: validate did not recover app 730 ($(acf_state)); removing appmanifest and retrying..."
+    echo "WARNING: validate did not recover app 730 ($(acf_state)); clearing pending download state..."
+    rm -rf "/home/${user}/cs2/steamapps/downloading/730" \
+           "/home/${user}/cs2/steamapps/temp"
+    run_app_update
+fi
+
+if ! update_ok; then
+    echo "WARNING: app 730 still unhealthy ($(acf_state)); removing appmanifest and retrying..."
+    echo "WARNING: this forces a full verify and refetch of the whole install."
     rm -f "$MANIFEST"
     run_app_update validate
 fi
